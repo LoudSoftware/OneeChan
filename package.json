@@ -1,0 +1,50 @@
+{
+  "name": "OneeChan",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "lint:gulp": "gulp lint",
+    "build:gulp": "gulp build",
+    "watch:gulp": "gulp watch",
+    "debug:gulp": "gulp debug",
+    "start:gulp": "gulp start",
+    "deploy:gulp": "gulp deploy",
+    "debug": "npm run debug:gulp -s",
+    "watch": "npm run watch:gulp -s",
+    "lint": "npm run lint:gulp -s",
+    "build": "npm run build:gulp -s",
+    "start": "npm run start:gulp -s",
+    "deploy": "npm run deploy:gulp -s",
+    "test": "mocha -r ts-node/register src/**/*.spec.ts"
+  },
+  "repository": "git@github.com:LoudSoftware/OneeChan.git",
+  "author": "LoudSoftware <contact@loud.software>",
+  "license": "MIT",
+  "dependencies": {
+    "del": "^3.0.0",
+    "discord.js": "^11.3.2",
+    "discord.js-commando": "^0.10.0",
+    "winston": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.1.4",
+    "@types/dotenv": "^4.0.3",
+    "@types/mocha": "^5.2.5",
+    "@types/node": "^10.5.4",
+    "chai": "^4.1.2",
+    "concurrently": "^3.6.1",
+    "dotenv": "^6.0.0",
+    "gulp": "^3.9.1",
+    "gulp-nodemon": "^2.2.1",
+    "gulp-sourcemaps": "^2.6.4",
+    "gulp-tslint": "^8.1.3",
+    "gulp-typescript": "^5.0.0-alpha.3",
+    "mocha": "^5.2.0",
+    "nodemon": "^1.18.3",
+    "ts-node": "^7.0.0",
+    "tsc": "^1.20150623.0",
+    "tslint": "^5.11.0",
+    "tslint-eslint-rules": "^5.3.1",
+    "typescript": "^3.0.1"
+  }
+}
