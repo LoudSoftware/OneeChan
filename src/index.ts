@@ -1,14 +1,19 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
+import { CommandoClient, SettingProvider, SQLiteProvider } from 'discord.js-commando';
 import * as path from 'path';
+import { Listeners } from "./Util/Listeners";
+import { _logger } from './Util/logger';
 
-import { _logger } from './logger';
-import { CommandoClient, CommandMessage } from "discord.js-commando";
-
+const sqlite = require('sqlite');
 const client = new CommandoClient({
     owner: '147410761021390850',
     commandPrefix: '?'
 });
+
+client.setProvider(
+    sqlite.open(path.join(__dirname, 'settings.sqlite3')).then((db: any) => new SQLiteProvider(db))
+).catch(console.error);
 
 const token = process.env.BOT_TOKEN;
 
@@ -20,12 +25,14 @@ client.on('ready',
         client.user.setActivity('the big sis', { type: 'PLAYING' });
     });
 
+client.on('voiceStateUpdate', (old, current) => Listeners._onVoiceStateUpdate(old, current));
+
 client.registry
     .registerGroups([
         ['util', 'Util'],
-        ['info', 'Info'],
+        ['info', 'Info']
     ])
     .registerDefaults()
-    .registerCommandsIn(path.join(__dirname, 'commands'));
+    .registerCommandsIn(path.join(__dirname, 'Commands'));
 
 client.login(token);

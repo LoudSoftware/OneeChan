@@ -11,8 +11,10 @@ const nodemon = require('gulp-nodemon');
 const project = gulpTs.createProject('tsconfig.json');
 const typeCheck = tslint.Linter.createProgram('tsconfig.json');
 
+gulp.task('default', ['build']);
+
 gulp.task('lint', () => {
-    return gulp.src('./src/**/*.ts')
+    gulp.src('./src/**/*.ts')
         .pipe(gulpTslint({
             configuration: 'tslint.json',
             formatter: 'prose',
@@ -21,14 +23,30 @@ gulp.task('lint', () => {
         .pipe(gulpTslint.report());
 });
 
-gulp.task('build', ['lint'], () => {
+gulp.task('build', () => {
     // Delete the dist folder
     del.sync(['./dist/**/*.*']);
-    return gulp.src('./src/**/*.ts')
+    gulp.src('./src/**/*.ts')
         .pipe(sourcemaps.init())
         .pipe(project())
         .pipe(sourcemaps.write('.', { includeContent: false, sourceRoot: '../src' }))
         .pipe(gulp.dest('dist'));
+});
+
+gulp.task('build', () => {
+    del.sync(['bin/**/*.*']);
+    const tsCompile = gulp.src('src/**/*.ts')
+        .pipe(sourcemaps.init({ base: 'src' }))
+        .pipe(project());
+
+    tsCompile.pipe(gulp.dest('dist/'));
+
+    gulp.src('src/**/*.js').pipe(gulp.dest('bin/'));
+    gulp.src('src/**/*.json').pipe(gulp.dest('bin/'));
+
+    return tsCompile.js
+        .pipe(sourcemaps.write('.', { sourceRoot: '../src' }))
+        .pipe(gulp.dest('dist/'));
 });
 
 gulp.task('watch', ['build'], function () {

@@ -7,13 +7,15 @@
       "lib": [
         "es6"
       ],
-      "noImplicitAny": true,
+      "declaration": false,
       "moduleResolution": "node",
       "sourceMap": true,
       "rootDir": "src",
       "outDir": "dist",
       "experimentalDecorators": true,
-      "emitDecoratorMetadata": true
+      "emitDecoratorMetadata": true,
+      "noImplicitAny": false,
+      "typeRoots": ["node_modules/@types"]
     },
     "exclude": [
       "node_modules",
