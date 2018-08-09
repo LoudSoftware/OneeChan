@@ -25,7 +25,9 @@ client.on('ready',
         client.user.setActivity('the big sis', { type: 'PLAYING' });
     });
 
-client.on('voiceStateUpdate', (old, current) => Listeners._onVoiceStateUpdate(old, current));
+const listeners = new Listeners(client);
+
+client.on('voiceStateUpdate', (old, current) => listeners._onVoiceStateUpdate(old, current));
 
 client.registry
     .registerGroups([
