@@ -4,4 +4,6 @@ auth.json
 /.idea
 /dist
 *.log
-*.sqlite
+*.sqlite/keyrings/live/pubring.gpg~
+/keyrings/live/pubring.kbx~
+/keyrings/live/secring.gpg
