@@ -1,5 +1,5 @@
-import { Command, CommandoClient, CommandMessage } from "discord.js-commando";
 import { Message } from "discord.js";
+import { Command, CommandoClient, CommandMessage } from "discord.js-commando";
 
 export default class PingCommand extends Command {
 

@@ -11,7 +11,7 @@
 		],
 		"no-use-before-declare": true,
 		"no-var-keyword": true,
-		"no-inferrable-types": true,
+		"no-inferrable-types": false,
 		"no-duplicate-variable": true,
 		"no-switch-case-fall-through": true,
 		"no-shadowed-variable": true,

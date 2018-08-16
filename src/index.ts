@@ -1,5 +1,6 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
+import { GuildMember } from 'discord.js';
 import { CommandoClient, SettingProvider, SQLiteProvider } from 'discord.js-commando';
 import * as path from 'path';
 import { Listeners } from "./Util/Listeners";
@@ -27,7 +28,8 @@ client.on('ready',
 
 const listeners = new Listeners(client);
 
-client.on('voiceStateUpdate', (old, current) => listeners._onVoiceStateUpdate(old, current));
+client.on('voiceStateUpdate', (old: GuildMember, current: GuildMember) => listeners._onVoiceStateUpdate(old, current));
+client.on('presenceUpdate', (old: GuildMember, current: GuildMember) => listeners._onPresenceUpdate(old, current));
 
 client.registry
     .registerGroups([

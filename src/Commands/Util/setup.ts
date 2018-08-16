@@ -1,5 +1,5 @@
-import { Message, CategoryChannel, Channel, GuildChannel } from "discord.js";
-import { ArgumentInfo, Command, CommandoClient, CommandMessage, ArgumentType } from "discord.js-commando";
+import { Channel, GuildChannel, Message } from "discord.js";
+import { Command, CommandoClient, CommandMessage } from "discord.js-commando";
 
 export default class extends Command {
 
