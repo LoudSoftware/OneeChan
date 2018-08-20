@@ -27,13 +27,12 @@ export class Listeners {
                     await this.renameUserVoiceChannel(current, await this.getGameName(current.voiceChannel));
                 }
 
-            }  else {
+            } else {
                 // He left
                 _logger.info(`${current.user.username} left ${old.voiceChannel.name}`);
-                await this.renameUserVoiceChannel(old, await this.getGameName(old.voiceChannel));
 
                 // If the channel is empty, delete it
-                if (old.voiceChannel.members.size === 0) {
+                if (old.voiceChannel.members.size === 0 && old.voiceChannel.parentID === categoryID) {
                     await old.voiceChannel.delete();
                 }
             }
