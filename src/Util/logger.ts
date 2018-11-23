@@ -1,19 +1,27 @@
 // import * as winston from 'winston';
-import * as fs from "fs";
+
 import { createLogger, format, transports } from "winston";
+// import winston = require("winston");
 
 export const _logger = createLogger({
-    format: format.combine(
-        format.colorize(),
-        format.simple()
-    ),
+    level: 'info',
+    format: format.json(),
     transports: [
-        new transports.Console({
-            level: 'debug'
+        new transports.File({
+            filename: './logs/error.log',
+            level: 'error'
         }),
-        new transports.Stream({
-            stream: fs.createWriteStream('./logs/debug.log'),
-            level: 'debug'
+        new transports.File({
+            filename: './logs/combined.log'
         })
     ]
 });
+
+if (process.env.NODE_ENV !== 'production'){
+    _logger.add(new transports.Console({
+        format: format.combine(
+            format.colorize(),
+            format.simple()
+        )
+    }))
+}

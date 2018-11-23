@@ -5,8 +5,8 @@ import { CommandoClient, SettingProvider, SQLiteProvider } from 'discord.js-comm
 import * as path from 'path';
 import { Listeners } from "./Util/Listeners";
 import { _logger } from './Util/logger';
+import sqlite from 'sqlite';
 
-const sqlite = require('sqlite');
 const client = new CommandoClient({
     owner: '147410761021390850',
     commandPrefix: '?'
