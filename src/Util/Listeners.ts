@@ -25,16 +25,16 @@ export class Listeners {
                 } else if (current.voiceChannel.parentID === categoryID) {
                     // User joined an already made AutoChannel, we will scan the presences to update name
                     await this.renameUserVoiceChannel(current, await this.getGameName(current.voiceChannel));
+                } else {
+                    // User switched to another non-monitored channel, delete old one if empty
+                    await this.deleteVoiceChannel(old.voiceChannel);
                 }
 
             } else {
                 // He left
-                _logger.info(`${current.user.username} left ${old.voiceChannel.name}`);
+                _logger.info(`${current.user.username} left ${old.voiceChannel.name}. No longer connected to any voice channel.`);
 
-                // If the channel is empty, delete it
-                if (old.voiceChannel.members.size === 0 && old.voiceChannel.parentID === categoryID) {
-                    await old.voiceChannel.delete();
-                }
+                this.deleteVoiceChannel(old.voiceChannel);
             }
         }
     }
@@ -88,7 +88,20 @@ export class Listeners {
     }
 
     private async renameUserVoiceChannel(member: GuildMember, gameName: string): Promise<any> {
+        // Extra dummy check
+        const voiceID = await this.client.provider.get(member.guild, 'voiceChannel');
+        if (member.voiceChannel.id === voiceID) return null;
+        
         if (gameName !== null) return await member.voiceChannel.setName(gameName);
         return await member.voiceChannel.setName(this.noGame);
+    }
+
+    private async deleteVoiceChannel(voiceChannel: VoiceChannel): Promise<any> {
+        const voiceID = await this.client.provider.get(voiceChannel.guild, 'voiceChannel');
+        const categoryID = await this.client.provider.get(voiceChannel.guild, 'categoryChannel');
+        // If the channel is empty, delete it
+        if (voiceChannel.members.size === 0 && voiceChannel.parentID === categoryID && voiceChannel.id !== voiceID) {
+            await voiceChannel.delete();
+        }
     }
 }
