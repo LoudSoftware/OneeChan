@@ -100,6 +100,7 @@ export class Listeners {
     }
 
     private async deleteVoiceChannel(voiceChannel: VoiceChannel): Promise<any> {
+        if (voiceChannel === undefined) return;
         const voiceID = await this.client.provider.get(voiceChannel.guild, 'voiceChannel');
         const categoryID = await this.client.provider.get(voiceChannel.guild, 'categoryChannel');
         // If the channel is empty, delete it
