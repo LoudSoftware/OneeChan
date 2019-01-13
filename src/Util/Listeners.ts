@@ -63,9 +63,12 @@ export class Listeners {
             const currentNumber = gameNames.get(member.presence.game.name);
             gameNames.set(member.presence.game.name, currentNumber !== undefined ? currentNumber + 1 : 1);
         });
-        gameNames.sort();
+
         if (gameNames.size === 0) return null;
-        return gameNames.lastKey();
+        gameNames.sort((a: number, b: number) => {
+            return a - b;
+        });
+        return gameNames.firstKey();
     }
 
     public async _onPresenceUpdate(old: GuildMember, current: GuildMember): Promise<any> {
@@ -91,7 +94,7 @@ export class Listeners {
         // Extra dummy check
         const voiceID = await this.client.provider.get(member.guild, 'voiceChannel');
         if (member.voiceChannel.id === voiceID) return null;
-        
+
         if (gameName !== null) return await member.voiceChannel.setName(gameName);
         return await member.voiceChannel.setName(this.noGame);
     }
