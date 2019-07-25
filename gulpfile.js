@@ -8,10 +8,10 @@ const sourcemaps = require('gulp-sourcemaps');
 const del = require('del');
 const nodemon = require('gulp-nodemon');
 
-const project = gulpTs.createProject('tsconfig.json');
-const typeCheck = tslint.Linter.createProgram('tsconfig.json');
+const project = gulpTs.createProject('./src/tsconfig.json');
+const typeCheck = tslint.Linter.createProgram('./src/tsconfig.json');
 
-gulp.task('default', ['build']);
+
 
 gulp.task('lint', () => {
     gulp.src('./src/**/*.ts')
@@ -23,53 +23,53 @@ gulp.task('lint', () => {
         .pipe(gulpTslint.report());
 });
 
-gulp.task('build', () => {
-    // Delete the dist folder
-    del.sync(['./dist/**/*.*']);
-    gulp.src('./src/**/*.ts')
-        .pipe(sourcemaps.init())
-        .pipe(project())
-        .pipe(sourcemaps.write('.', { includeContent: false, sourceRoot: '../src' }))
-        .pipe(gulp.dest('dist'));
-});
+// gulp.task('build', () => {
+//     // Delete the dist folder
+//     del.sync(['./dist/**/*.*']);
+//     gulp.src('./src/**/*.ts')
+//         .pipe(sourcemaps.init())
+//         .pipe(project())
+//         .pipe(sourcemaps.write())
+//         .pipe(gulp.dest('dist'));
+// });
 
 gulp.task('build', () => {
-    del.sync(['bin/**/*.*']);
-    const tsCompile = gulp.src('src/**/*.ts')
-        .pipe(sourcemaps.init({ base: 'src' }))
+    del.sync(['dist/**/*.*']);
+    const tsCompile = gulp.src('./src/**/*.ts')
+        .pipe(sourcemaps.init())
         .pipe(project());
 
     tsCompile.pipe(gulp.dest('dist/'));
 
-    gulp.src('src/**/*.js').pipe(gulp.dest('bin/'));
-    gulp.src('src/**/*.json').pipe(gulp.dest('bin/'));
+    gulp.src('src/**/*.js').pipe(gulp.dest('dist/'));
+    gulp.src('src/**/*.json').pipe(gulp.dest('dist/'));
 
     return tsCompile.js
-        .pipe(sourcemaps.write('.', { sourceRoot: '../src' }))
+        .pipe(sourcemaps.write())
         .pipe(gulp.dest('dist/'));
 });
 
-gulp.task('watch', ['build'], function () {
-    gulp.watch('./src/**/*.ts', ['build']);
+gulp.task('watch', function () {
+    gulp.watch('./src/**/*.ts', gulp.series('build'));
 });
 
-gulp.task('start', ['build'], function () {
+gulp.task('start', gulp.series('build', function () {
     return nodemon({
         script: './dist/index.js',
         watch: './dist/index.js'
     })
-});
+}));
 
-gulp.task('debug-prod', ['watch'], () => {
+gulp.task('debug-prod', gulp.series('build', gulp.parallel('watch', () => {
     return nodemon({
         script: './dist/index.js',
         watch: './dist/',
         nodeArgs: ['--inspect']
     })
-});
+})));
 
 
-gulp.task('debug', ['watch'], function () {
+gulp.task('debug', gulp.parallel('build', 'watch', function () {
     return nodemon({
         script: './dist/index.js',
         watch: './dist/',
@@ -78,4 +78,6 @@ gulp.task('debug', ['watch'], function () {
         },
         nodeArgs: ['--inspect'],
     })
-});
+}));
+
+gulp.task('default', gulp.series('build'));
