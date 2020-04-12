@@ -4,6 +4,7 @@ using Discord.Commands;
 
 namespace OneeChan.Modules
 {
+    [Group("Housekeeper settings")]
     public class HouseKeepingSettings : ModuleBase<SocketCommandContext>
     {
         // [Command("ping")]

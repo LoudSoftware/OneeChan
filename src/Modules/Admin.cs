@@ -33,28 +33,27 @@ namespace OneeChan.Modules
 
         [Command("change-prefix", RunMode = RunMode.Async)]
         [RequireUserPermission(GuildPermission.Administrator)]
+        [Summary("Change the bot's default prefix")]
         public async Task ChangePrefix(char prefix)
         {
-            using (var db = new OneeChanEntities())
+            await using var db = new OneeChanEntities();
+            
+            // Get current Guild from DB
+            var guild = db.Guilds.FirstOrDefault(p => p.GuildId == (long) Context.Guild.Id);
+
+            // If there is no guild row in the DB
+            if (guild == null)
             {
-                // Get current Guild from DB
-                var guild = db.Guilds.FirstOrDefault(p => p.GuildId == (long) Context.Guild.Id);
-
-                // If there is no guild row in the DB
-                if (guild == null)
-                {
-                    _logger.LogWarning("Guild not found in db, creating new guild object");
-                    var newGuild = new Guild {GuildId = (long) Context.Guild.Id};
-                    db.Guilds.Add(guild = newGuild);
-                }
-
-                var guildSettings = guild.ServerSettings ?? new ServerSetting();
-
-
-                guildSettings.Prefix = prefix;
-                guild.ServerSettings = guildSettings;
-                db.SaveChanges();
+                _logger.LogWarning("Guild not found in db, creating new guild object");
+                var newGuild = new Guild {GuildId = (long) Context.Guild.Id};
+                guild = newGuild;
             }
+
+            var guildSettings = guild.ServerSettings ?? new ServerSettings();
+            guildSettings.Prefix = prefix;
+            guild.ServerSettings = guildSettings;
+            db.Guilds.Add(guild);
+            db.SaveChanges();
         }
     }
 }
