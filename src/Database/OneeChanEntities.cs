@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal;
 using OneeChan.Database.Entities;
 
 namespace OneeChan.Database
@@ -18,7 +19,9 @@ namespace OneeChan.Database
             // var connection = new SqliteConnection(connectionString);
 
             // optionsBuilder.UseSqlite(connection);
-            optionsBuilder.UseSqlite("Data Source=oneechan.db");
+            // optionsBuilder.UseSqlite("Data Source=oneechan.db");
+            optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=OneeChan;Trusted_Connection=True;MultipleActiveResultSets=true");
         }
+
     }
 }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -99,7 +100,7 @@ namespace OneeChan.Services
             ServerSettings settings = null;
 
             using var db = new OneeChanEntities();
-            var guild = db.Guilds.FirstOrDefault(p => p.GuildId == GuildId);
+            var guild = db.Guilds.Include(guild => guild.ServerSettings).FirstOrDefault(p => p.GuildId == GuildId);
             settings = guild?.ServerSettings;
             return settings;
         }

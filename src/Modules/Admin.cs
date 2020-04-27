@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -39,7 +40,7 @@ namespace OneeChan.Modules
             await using var db = new OneeChanEntities();
             
             // Get current Guild from DB
-            var guild = db.Guilds.FirstOrDefault(p => p.GuildId == (long) Context.Guild.Id);
+            var guild = db.Guilds.Include(guild => guild.ServerSettings).FirstOrDefault(p => p.GuildId == (long) Context.Guild.Id);
 
             // If there is no guild row in the DB
             if (guild == null)
@@ -52,8 +53,7 @@ namespace OneeChan.Modules
             var guildSettings = guild.ServerSettings ?? new ServerSettings();
             guildSettings.Prefix = prefix;
             guild.ServerSettings = guildSettings;
-            db.Guilds.Add(guild);
-            db.SaveChanges();
+            await db.SaveChangesAsync();
         }
     }
 }

@@ -7,6 +7,7 @@ using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using OneeChan.Database;
 using OneeChan.Services;
 using Serilog;
 
@@ -62,6 +63,7 @@ namespace OneeChan
             var services = new ServiceCollection()
                 // Base
                 .AddSingleton(_config)
+                .AddDbContext<OneeChanEntities>()
                 .AddSingleton<DiscordSocketClient>()
                 .AddSingleton<CommandService>()
                 .AddSingleton<CommandHandlingService>()
