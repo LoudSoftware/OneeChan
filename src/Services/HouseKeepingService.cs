@@ -9,7 +9,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using OneeChan.Database;
 using OneeChan.Database.Entities;
-using OneeChan.Enums;
 
 namespace OneeChan.Services
 {
