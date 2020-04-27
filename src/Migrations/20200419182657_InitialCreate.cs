@@ -11,7 +11,7 @@ namespace OneeChan.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     AutoCategoryChannelId = table.Column<long>(nullable: true),
                     AutoVoiceChannelId = table.Column<long>(nullable: true)
                 },
@@ -25,8 +25,8 @@ namespace OneeChan.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Prefix = table.Column<char>(nullable: true)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Prefix = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -38,7 +38,7 @@ namespace OneeChan.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     GuildId = table.Column<long>(nullable: false),
                     HouseKeeperSettingsId = table.Column<int>(nullable: true),
                     ServerSettingsId = table.Column<int>(nullable: true)
