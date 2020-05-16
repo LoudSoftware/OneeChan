@@ -1,14 +1,13 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Discord.Rest;
 using Discord.WebSocket;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using OneeChan.Database;
 using OneeChan.Database.Entities;
+using static OneeChan.Util.HouseKeeperUtils;
 
 namespace OneeChan.Services
 {
@@ -25,6 +24,7 @@ namespace OneeChan.Services
             _services = services;
 
             _discord.UserVoiceStateUpdated += UserVoiceStateUpdated;
+            _discord.GuildMemberUpdated += GuildMemberUpdated;
         }
 
         private async Task UserVoiceStateUpdated(SocketUser user, SocketVoiceState preState, SocketVoiceState postState)
@@ -70,13 +70,20 @@ namespace OneeChan.Services
                     var channel = await guildUser.Guild.CreateVoiceChannelAsync("🌴 Just chillin'",
                         c => c.CategoryId = (ulong) guildVoiceCategoryId);
                     await guildUser.ModifyAsync(u => u.Channel = channel);
+                    //await UpdateVoiceChannelName(channel as SocketVoiceChannel);
                 }
 
                 // Check user's previous voice channel for deletion
-                if (preState.VoiceChannel != null &&
-                    CheckDelete(preState.VoiceChannel, guildVoiceCategoryId, guildVoiceChannelId))
+                if (preState.VoiceChannel != null)
                 {
-                    await preState.VoiceChannel.DeleteAsync();
+                    if (CheckDelete(preState.VoiceChannel, guildVoiceCategoryId, guildVoiceChannelId))
+                    {
+                        await preState.VoiceChannel.DeleteAsync();
+                    }
+                    else
+                    {
+                        await UpdateVoiceChannelName(postState.VoiceChannel);
+                    }
                 }
             }
         }
@@ -93,6 +100,47 @@ namespace OneeChan.Services
         {
             return voiceChannel.CategoryId != null && (long) voiceChannel.CategoryId == catId &&
                    (long) voiceChannel.Id != voiceId;
+        }
+
+        private async Task GuildMemberUpdated(SocketGuildUser preUser, SocketGuildUser postUser)
+        {
+            // Check if the user is in a relevant voice channel first
+
+            #region Settings retrieval
+
+            //TODO refactor this out since it's duplicated in other Event listeners as well
+
+            await using var db = new OneeChanEntities();
+            HouseKeeper housekeeperSettings = db.Guilds.Include(g => g.HouseKeeperSettings)
+                .FirstOrDefault(g => g.GuildId == (long) postUser.Guild.Id)?.HouseKeeperSettings;
+
+            if (postUser.VoiceChannel?.CategoryId != (ulong) housekeeperSettings.AutoCategoryChannelId)
+                return;
+
+            #endregion
+
+            var preAct = preUser.Activities;
+            var postAct = postUser.Activities;
+
+
+            await UpdateVoiceChannelName(postUser.VoiceChannel);
+
+
+            _logger.LogInformation(
+                $"User [{postUser.Username}] activity change detected");
+        }
+
+
+        private async Task UpdateVoiceChannelName(SocketVoiceChannel voiceChannel)
+        {
+            var topGame = voiceChannel.Users
+                .Select(user => GetCandidateGameFromActivities(user.Activities).Name)
+                .GroupBy(game => game)
+                .OrderByDescending(group => group.Count())
+                .Select(grp => grp.Key)
+                .First();
+
+            await voiceChannel.ModifyAsync(c => c.Name = topGame);
         }
     }
 }
