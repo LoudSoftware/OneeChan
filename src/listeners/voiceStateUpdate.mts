@@ -24,9 +24,14 @@ export class VoiceStateUpdateListener extends Listener {
             const { categoryChannelID, voiceChannelID } = settings;
 
             if (newState.channelId === voiceChannelID) {
-                const activities = newState.member?.presence?.activities.map((activity) => activity.name) || [];
+                const activities =
+                    newState.member?.presence?.activities.map((activity) =>
+                        activity.name
+                    ) || [];
                 this.container.logger.debug(`Activities: ${activities}`);
-                const channelName = activities.length > 0 ? activities[0] : noGame;
+                const channelName = activities.length > 0
+                    ? activities[0]
+                    : noGame;
 
                 const autoChannel = await newState.guild.channels.create({
                     name: channelName,
@@ -43,8 +48,13 @@ export class VoiceStateUpdateListener extends Listener {
             const settings = getSettings(newState.guild.id);
             if (!settings) return;
 
-            if (oldState.channel.parentId === settings.categoryChannelID && oldState.channelId !== settings.voiceChannelID) {
-                this.container.logger.info(`Deleting empty auto channel: ${oldState.channel.name}`);
+            if (
+                oldState.channel.parentId === settings.categoryChannelID &&
+                oldState.channelId !== settings.voiceChannelID
+            ) {
+                this.container.logger.info(
+                    `Deleting empty auto channel: ${oldState.channel.name}`,
+                );
                 await oldState.channel.delete();
             }
         }

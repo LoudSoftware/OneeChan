@@ -11,7 +11,7 @@ export class PingCommand extends Command {
             name: "ping",
             aliases: ["pong"],
             description: "Simple ping command to test server latency.",
-            preconditions: ['OwnerOnly']
+            preconditions: ["OwnerOnly"],
         });
     }
 

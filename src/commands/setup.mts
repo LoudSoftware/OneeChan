@@ -12,7 +12,7 @@ export class SetupCommand extends Command {
             ...options,
             name: "setup",
             description: "Bot Setup",
-            preconditions: ['OwnerOnly']
+            preconditions: ["OwnerOnly"],
         });
     }
 
@@ -28,8 +28,7 @@ export class SetupCommand extends Command {
                         .setDescription("The category channel to manage")
                         .addChannelTypes(ChannelType.GuildCategory)
                         .setRequired(true)
-                ),
-        {
+                ), {
             idHints: ["1304658154411393054"],
         });
     }
@@ -47,12 +46,16 @@ export class SetupCommand extends Command {
         // This will be used as the joining voice channel
         const catChildren = categoryChannel.children.cache;
 
-        if (catChildren.size !== 1 || !(catChildren.at(0) instanceof VoiceChannel)) {
+        if (
+            catChildren.size !== 1 ||
+            !(catChildren.at(0) instanceof VoiceChannel)
+        ) {
             return await interaction.reply({
-                content: `The chosen category channel must have only one child of type VoiceChannel`,
-                ephemeral: true
+                content:
+                    `The chosen category channel must have only one child of type VoiceChannel`,
+                ephemeral: true,
             });
-        };
+        }
 
         const voiceChannel = catChildren.at(0) as VoiceChannel;
 
