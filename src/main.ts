@@ -1,19 +1,21 @@
 import "@std/dotenv/load";
 import "@sapphire/plugin-hmr/register";
 import { container, LogLevel, SapphireClient } from "@sapphire/framework";
-import { ActivityType, GatewayIntentBits, RateLimitData, RESTOptions } from "discord.js";
+import {
+    ActivityType,
+    GatewayIntentBits,
+    RateLimitData,
+    RESTOptions,
+} from "discord.js";
 import { Database } from "@db/sqlite";
-import { SapphireClientOptions } from "@sapphire/framework";
-// import { LatestOnlyHandler } from "./lib/LatestOnlyHandler.ts.brokey";
 
 export class CustomClient extends SapphireClient {
     public constructor() {
-        const logLevel = Deno.env.get('BOT_LOG_LEVEL') || "Info";
+        const logLevel = Deno.env.get("BOT_LOG_LEVEL") || "Info";
 
         const shouldRejectOnRateLimit = (data: RateLimitData) => {
-            return data.method === 'PATCH' && data.route === '/channels/:id';
-        }
-        
+            return data.method === "PATCH" && data.route === "/channels/:id";
+        };
 
         super({
             intents: [
@@ -37,14 +39,14 @@ export class CustomClient extends SapphireClient {
             baseUserDirectory: "src",
             logger: {
                 // Map log levels to the BOT_LOG_LEVEL env var
-                level: LogLevel[logLevel as keyof typeof LogLevel]
+                level: LogLevel[logLevel as keyof typeof LogLevel],
             },
             rest: <RESTOptions> {
-                rejectOnRateLimit: shouldRejectOnRateLimit
+                rejectOnRateLimit: shouldRejectOnRateLimit,
             },
             hmr: {
-                enabled: Deno.env.get('DENO_ENV') === 'DEV'
-            }
+                enabled: Deno.env.get("DENO_ENV") === "DEV",
+            },
         });
     }
 
@@ -66,20 +68,34 @@ export class CustomClient extends SapphireClient {
     }
 
     public override destroy() {
+        container.logger.debug("Closing DB connection...");
         container.database.close();
         return super.destroy();
     }
 }
 
+function cleanup() {
+    container.logger.info("Bot is shutting down...");
+    client.destroy();
+}
+
+Deno.addSignalListener("SIGINT", () => {
+    container.logger.debug("Received SIGINT");
+    cleanup();
+    Deno.exit(0);
+});
+
+Deno.addSignalListener("SIGTERM", () => {
+    container.logger.debug("Received SIGTERM");
+    cleanup();
+    Deno.exit(0);
+});
+
 const client = new CustomClient();
-// client.rest.handlers.set('/channels/:id', (manager, hash, majorParameter) => {
-//     return new LatestOnlyHandler(manager, hash, majorParameter);
-// });
 
 const token = Deno.env.get("BOT_TOKEN");
 client.login(token).catch(console.error);
 
-// Adding database in container
 declare module "@sapphire/pieces" {
     interface Container {
         database: Database;

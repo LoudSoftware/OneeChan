@@ -1,1 +1,1 @@
-export const noGame: string = 'Just Chilling 😌';
+export const noGame: string = "Just Chilling 😌";

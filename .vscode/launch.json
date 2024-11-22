@@ -8,15 +8,12 @@
             "request": "launch",
             "name": "Launch Program",
             "type": "node",
-            "program": "${workspaceFolder}/src/main.ts",
             "cwd": "${workspaceFolder}",
             "env": {},
             "runtimeExecutable": "/run/current-system/sw/bin/deno",
             "runtimeArgs": [
                 "run",
-                "--unstable",
-                "--inspect-wait",
-                "--allow-all"
+                "debug",
             ],
             "attachSimplePort": 9229
         }

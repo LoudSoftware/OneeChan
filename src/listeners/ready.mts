@@ -2,7 +2,6 @@ import { Listener } from "@sapphire/framework";
 import type { Client } from "discord.js";
 
 export class ReadyListener extends Listener {
-    [x: string]: any;
     public constructor(
         context: Listener.LoaderContext,
         options: Listener.Options,
