@@ -68,7 +68,7 @@ export class CustomClient extends SapphireClient {
     }
 
     public override destroy() {
-        container.logger.debug("Closing DB connection...")
+        container.logger.debug("Closing DB connection...");
         container.database.close();
         return super.destroy();
     }
